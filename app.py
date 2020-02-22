@@ -4,6 +4,7 @@ from werkzeug.security import safe_str_cmp
 import model
 import http_client
 import json
+from flask_cors import CORS
 
 http = http_client.Client()
 
@@ -47,6 +48,7 @@ def identity(payload):
 
 
 app = Flask(__name__)
+CORS(app)
 app.debug = True
 app.config['SECRET_KEY'] = 'super-secret'
 
