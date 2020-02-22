@@ -63,7 +63,7 @@ def get_global_status():
         for financial_index in result:
             response.append({global_ticker['iso3']: {'changesPercentage': financial_index['changesPercentage']
                 , 'price': financial_index['price'], 'country': global_ticker['name']}})
-    return str(response)
+    return json.dumps(response)
 
 
 @app.route('/api/get_user_holdings')
@@ -76,7 +76,7 @@ def get_user_holdings():
             response.append({'ticker_symbol': user_ticker['ticker_symbol']
                                 , 'changesPercentage': financial_index['changesPercentage']
                                 , 'price': financial_index['price']})
-    return str(response)
+    return json.dumps(response)
 
 
 @app.route('/protected')
