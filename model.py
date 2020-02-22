@@ -1,4 +1,4 @@
-import sql
+from sql import psql
 import os
 
 DATABASE_CONFIG = {
@@ -10,20 +10,21 @@ DATABASE_CONFIG = {
     'password': os.getenv('RD_OPTION_DB_PASS'),
 }
 
-sql = sql.psql(**DATABASE_CONFIG)
-
 
 def get_world_ticker_list():
+    sql = psql(**DATABASE_CONFIG)
     ticker_list = sql.query("""
     SELECT iso3, name, ticker_symbol
     FROM public.world
     WHERE ticker_symbol != '';
     """, as_dict=True)
+    sql.close()
     for row in ticker_list:
         yield dict(row)
 
 
 def get_user_holdings(user_id):
+    sql = psql(**DATABASE_CONFIG)
     ticker_list = sql.query("""
     SELECT
         user_uuid
@@ -31,11 +32,13 @@ def get_user_holdings(user_id):
     FROM public.holdings
     WHERE user_uuid = '{}';
     """.format(user_id), as_dict=True)
+    sql.close()
     for row in ticker_list:
         yield dict(row)
 
 
 def get_user_list():
+    sql = psql(**DATABASE_CONFIG)
     result = sql.query("""
     SELECT
         uuid
@@ -46,6 +49,7 @@ def get_user_list():
       , password
     FROM public.user;
     """, as_dict=True)
+    sql.close()
 
     if not result:
         raise IndexError
