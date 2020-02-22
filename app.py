@@ -58,21 +58,23 @@ app.config['SECRET_KEY'] = 'super-secret'
 
 jwt = JWT(app, authenticate, identity)
 
+prices = {}
+
 
 @app.route('/api/get_global_status')
 def get_global_status():
-    print()
     response = []
     for global_ticker in model.get_world_ticker_list():
-        result = http.get(f"https://financialmodelingprep.com/api/v3/quote/{global_ticker['ticker_symbol']}").json()
-        for financial_index in result:
-            variation = (decimal.Decimal(random.randrange(5, 40)) / 100)
-            if global_ticker['ticker_symbol'] == '^GDAXI':
-                final_value = float(abs(Decimal(financial_index['changesPercentage']) + variation))
-            else:
-                final_value = float((Decimal(financial_index['changesPercentage']) + variation))
-            response.append({global_ticker['iso3']: {'changesPercentage': final_value
-                , 'price': financial_index['price'], 'country': global_ticker['name']}})
+        # result = http.get(f"https://financialmodelingprep.com/api/v3/quote/{global_ticker['ticker_symbol']}").json()
+        if prices.get(global_ticker['ticker_symbol']) is None:
+            prices[global_ticker['ticker_symbol']] = float(decimal.Decimal(random.randrange(-200, 200) / 100))
+            current_price = prices.get(global_ticker['ticker_symbol'])
+        else:
+            randomizer = float(decimal.Decimal(random.randrange(5, 45) / 100))
+            current_price = prices.get(global_ticker['ticker_symbol']) + randomizer
+
+        response.append({global_ticker['iso3']: {'changesPercentage': current_price
+            , 'price': 34.55, 'country': global_ticker['name']}})
     return json.dumps(response)
 
 
